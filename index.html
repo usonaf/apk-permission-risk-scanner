@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escáner de riesgo de permisos APK | Evaluá tu APK</title>
+    <meta name="description" content="Evalúa el riesgo de permisos sensibles en una APK antes de instalarla. Herramienta web para Android.">
+    <style>
+        :root {
+            --color-primary: #f1299a;
+            --color-secondary: #46669d;
+            --color-background: #ffffff;
+            --color-text: #333333;
+            --color-highlight: #ffe082;
+            --color-dark-grey: #555555;
+            --font-display: 'Bebas Neue', sans-serif;
+            --font-body: 'Roboto', sans-serif;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: var(--font-body);
+            color: var(--color-text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-background);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 1rem auto 0;
+        }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .tool-section {
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            max-width: 700px;
+            width: 100%;
+            margin-bottom: 2rem;
+            border-left: 8px solid var(--color-secondary);
+        }
+
+        .tool-section h2 {
+            font-family: var(--font-display);
+            color: var(--color-secondary);
+            font-size: 2.2rem;
+            margin-top: 0;
+            border-bottom: 2px solid var(--color-highlight);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-section form label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: var(--color-dark-grey);
+        }
+
+        .tool-section form input[type="checkbox"] {
+            margin-right: 0.8rem;
+            transform: scale(1.4);
+            accent-color: var(--color-primary);
+        }
+
+        #tool-submit {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+            width: fit-content;
+            margin-top: 1.5rem;
+            font-family: var(--font-display);
+            letter-spacing: 1px;
+        }
+
+        #tool-submit:hover {
+            background-color: #d12181;
+        }
+
+        #tool-result {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            border-left: 8px solid var(--color-highlight);
+        }
+
+        #tool-result h3 {
+            font-family: var(--font-display);
+            color: var(--color-secondary);
+            font-size: 1.8rem;
+            margin-top: 0;
+        }
+
+        #tool-result p {
+            margin-bottom: 0.5rem;
+        }
+
+        .disclaimer {
+            background-color: #fff3e0;
+            border-left: 8px solid orange;
+            padding: 1.5rem;
+            margin: 2rem auto;
+            max-width: 700px;
+            border-radius: 8px;
+            color: var(--color-dark-grey);
+            font-size: 0.95rem;
+        }
+
+        .disclaimer h3 {
+            font-family: var(--font-display);
+            color: #e65100;
+            margin-top: 0;
+            font-size: 1.6rem;
+        }
+
+        .about-section, .seo-section {
+            max-width: 800px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .about-section h2, .seo-section h2 {
+            font-family: var(--font-display);
+            color: var(--color-primary);
+            font-size: 2.2rem;
+            border-bottom: 2px solid var(--color-secondary);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        footer {
+            background-color: var(--color-dark-grey);
+            color: white;
+            text-align: center;
+            padding: 1.5rem 1rem;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        .payment-methods {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .payment-methods li {
+            background-color: var(--color-secondary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+    </style>
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://apk-permission-risk-scanner.onrender.com">
+    <meta property="og:title" content="Escáner de riesgo de permisos APK">
+    <meta property="og:description" content="Evalúa el riesgo de permisos sensibles en una APK antes de instalarla. Herramienta web para Android.">
+    <meta property="og:url" content="https://apk-permission-risk-scanner.onrender.com">
+    <meta property="og:type" content="website">
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Escáner de riesgo de permisos APK", "description": "Evalúa el riesgo de permisos sensibles en una APK antes de instalarla. Herramienta web para Android.", "url": "https://apk-permission-risk-scanner.onrender.com", "applicationCategory": "UtilityApplication", "operatingSystem": "Web Browser"}</script>
+</head>
+<body data-site-slug="apk-permission-risk-scanner" data-runtime-mode="analysis_tool">
+    <header>
+        <h1>Escáner de riesgo de permisos APK</h1>
+        <p>¿Vas a instalar una app de Android y querés saber si es segura? Usá nuestra herramienta para evaluar el riesgo de los permisos que pide la APK antes de que la bajes.</p>
+    </header>
+
+    <main>
+        <div class="tool-section">
+            <h2>Evaluá tu APK</h2>
+            <p>Seleccioná los permisos sensibles que tu APK requiere para estimar su nivel de riesgo:</p>
+            <form id="tool-form">
+                <label>
+                    <input type="checkbox" name="permission" value="storage">
+                    Acceso a Almacenamiento (fotos, archivos, etc.)
+                </label>
+                <label>
+                    <input type="checkbox" name="permission" value="contacts">
+                    Acceso a Contactos (leer, modificar)
+                </label>
+                <label>
+                    <input type="checkbox" name="permission" value="sms">
+                    Acceso a SMS (leer, enviar)
+                </label>
+                <label>
+                    <input type="checkbox" name="permission" value="camera">
+                    Acceso a la Cámara
+                </label>
+                <label>
+                    <input type="checkbox" name="permission" value="location">
+                    Acceso a Ubicación (GPS, red)
+                </label>
+                <label>
+                    <input type="checkbox" name="permission" value="notifications">
+                    Notificaciones Sensibles (acceso completo a notificaciones)
+                </label>
+                <label>
+                    <input type="checkbox" name="permission" value="unknown_sources">
+                    Instalación de Fuentes Desconocidas (habilitar instalación de apps fuera de Play Store)
+                </label>
+                <button type="submit" id="tool-submit">Calcular Riesgo</button>
+            </form>
+            <div id="tool-result" style="display: none;">
+                <h3 id="result-headline">Resultado del Análisis:</h3>
+                <p id="risk-level"></p>
+                <p id="risk-explanation"></p>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            <h3>Juego Responsable y Seguridad Digital</h3>
+            <p>Esta herramienta es un simulador orientativo y no garantiza la seguridad absoluta de ninguna aplicación. Siempre recomendamos descargar APKs de fuentes oficiales y de confianza (como Google Play Store). El uso de esta herramienta es bajo tu propia responsabilidad. Recordá que la seguridad de tus dispositivos es clave para un entorno digital saludable. No hay garantías de ganancias con juegos móviles; el objetivo es el entretenimiento.</p>
+        </div>
+
+        <div class="about-section">
+            <h2>¿Por qué es importante revisar los permisos?</h2>
+            <p>En Argentina, la seguridad de nuestros datos personales es un tema serio. Muchas aplicaciones, especialmente las que se bajan de sitios no oficiales, pueden pedir más permisos de los que realmente necesitan. Esto podría darles acceso a tu información privada, como tus contactos, fotos, ubicación o incluso la posibilidad de enviar mensajes sin tu consentimiento.</p>
+            <p>Conocer los permisos que solicita una APK te permite tomar una decisión informada antes de instalarla. Nuestra herramienta te da una idea del riesgo potencial, ayudándote a proteger tu privacidad y tu celular de posibles usos maliciosos.</p>
+        </div>
+    </main>
+
+    <footer>
+        © 2023 Seguridad Digital Argentina. Todos los derechos reservados.
+        <div style="margin-top: 1rem;">
+            <p>Métodos de pago futuros para servicios premium:</p>
+            <ul class="payment-methods">
+                <li>CBU</li>
+                <li>CVU</li>
+                <li>Alias CBU</li>
+                <li>DNI</li>
+                <li>CUIT/CUIL</li>
+                <li>Billetera Virtual (Mercado Pago, Ualá, etc.)</li>
+                <li>Transferencia Bancaria</li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('tool-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const checkboxes = document.querySelectorAll('#tool-form input[name="permission"]:checked');
+            let riskScore = 0;
+            const selectedPermissions = [];
+
+            checkboxes.forEach(checkbox => {
+                selectedPermissions.push(checkbox.value);
+                switch (checkbox.value) {
+                    case 'storage':
+                    case 'camera':
+                    case 'location':
+                    case 'notifications':
+                        riskScore += 2;
+                        break;
+                    case 'contacts':
+                    case 'sms':
+                    case 'unknown_sources':
+                        riskScore += 3;
+                        break;
+                }
+            });
+
+            let riskLevel = '';
+            let riskExplanation = '';
+
+            if (selectedPermissions.length === 0) {
+                riskLevel = 'Riesgo: BAJO';
+                riskExplanation = 'No se seleccionaron permisos sensibles. El riesgo parece bajo, pero siempre sé precavido.';
+            } else if (riskScore <= 3) {
+                riskLevel = 'Riesgo: BAJO';
+                riskExplanation = 'Los permisos seleccionados no presentan un riesgo significativo en la mayoría de los casos. Siempre revisá si son coherentes con la funcionalidad de la app.';
+            } else if (riskScore <= 7) {
+                riskLevel = 'Riesgo: MEDIO';
+                riskExplanation = 'La app solicita varios permisos sensibles. Analizá bien si necesita todos ellos para funcionar. Considerá las implicancias para tu privacidad.';
+            } else {
+                riskLevel = 'Riesgo: ALTO';
+                riskExplanation = 'ATENCIÓN: La app requiere múltiples permisos muy sensibles. Existe un riesgo considerable para tu privacidad y seguridad. Pensalo dos veces antes de instalar.';
+            }
+
+            document.getElementById('risk-level').textContent = riskLevel;
+            document.getElementById('risk-explanation').textContent = riskExplanation;
+            document.getElementById('tool-result').style.display = 'block';
+
+            document.getElementById('tool-result').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+
+    <!-- Sección SEO para Argentina -->
+    <div class="seo-section">
+        <h2>Herramientas para juegos móviles en Argentina: seguridad y juego responsable</h2>
+        <p>En el mundo de los <strong>juegos móviles en Argentina</strong>, la seguridad de tu información es primordial. Miles de usuarios buscan constantemente cómo <strong>proteger cuenta juegos móviles</strong> y evitar fraudes. Nuestro escáner de permisos APK es una <strong>herramienta web para Android</strong> diseñada para que puedas <strong>evaluar riesgo app antes de instalar</strong>. Si estás buscando <strong>apps seguras para descargar</strong> o cómo <strong>ver permisos de una APK</strong>, esta utilidad te ayuda a tomar decisiones informadas.</p>
+        <p>No se trata de <strong>apuestas juegos online</strong> ni de <strong>casino móvil Argentina</strong>, sino de entender cómo funcionan las aplicaciones en tu dispositivo. Queremos promover el <strong>juego responsable</strong>, que también implica la <strong>seguridad digital</strong>. Antes de descargar cualquier archivo APK, especialmente si no proviene de la Google Play Store, es crucial <strong>analizar permisos APK</strong>. Esto te protege de <strong>apps con malware</strong> o de aquellas que pueden acceder a tu <strong>ubicación celular</strong>, <strong>fotos personales</strong> o <strong>contactos sin permiso</strong>. Buscamos ser tu aliado para la <strong>seguridad de cuenta en juegos</strong> y en el uso general de tu smartphone.</p>
+        <p>Para quienes se preguntan <strong>cómo saber si una app es segura</strong> o cómo <strong>proteger datos personales en Android</strong>, esta herramienta ofrece una respuesta práctica. Evitá riesgos innecesarios al <strong>descargar APKs</strong> y mantené tus <strong>juegos móviles seguros</strong>. Nuestra misión es darte las herramientas para que vos mismo puedas <strong>chequear permisos de aplicaciones Android</strong> y así garantizar una experiencia de <strong>entretenimiento móvil</strong> sin preocupaciones en Argentina.</p>
+    </div>
+<div id="qa-smoke-result" hidden></div>
+<script id="farmbuilder-affiliate-helper">
+(function () {
+  window.__UTILITY_AFFILIATE_MAP = window.__UTILITY_AFFILIATE_MAP || {};
+  document.addEventListener("click", function (event) {
+    const target = event.target.closest("[data-affiliate-slot]");
+    if (!target) return;
+    const slot = target.getAttribute("data-affiliate-slot");
+    const href = window.__UTILITY_AFFILIATE_MAP[slot];
+    if (!href) return;
+    if (target.tagName && target.tagName.toLowerCase() === "a") {
+      target.setAttribute("href", href);
+      target.removeAttribute("rel");
+      return;
+    }
+    event.preventDefault();
+    window.open(href, "_blank");
+  }, true);
+})();
+</script>
+<script id="farmbuilder-functional-qa">
+(function () {
+  function marker() {
+    let node = document.getElementById("qa-smoke-result");
+    if (node) return node;
+    node = document.createElement("div");
+    node.id = "qa-smoke-result";
+    node.hidden = true;
+    document.body.appendChild(node);
+    return node;
+  }
+
+  let qaFinished = false;
+  let qaWatchdog = null;
+
+  function normalize(text) {
+    return String(text || "").replace(/\s+/g, " ").trim();
+  }
+
+  function findForm() {
+    return document.getElementById("tool-form") || document.querySelector("form");
+  }
+
+  function findResult() {
+    return (
+      document.getElementById("tool-result") ||
+      document.querySelector("[data-result]") ||
+      document.querySelector(".tool-result, .result-card, .result, .results, .output, .preview, .diagnostic, .analysis")
+    );
+  }
+
+  function primaryAction(form) {
+    if (!form) return null;
+    return (
+      document.getElementById("tool-submit") ||
+      form.querySelector("#tool-submit") ||
+      form.querySelector("[data-primary-action]") ||
+      form.querySelector("button[type=submit]") ||
+      form.querySelector("button") ||
+      form.querySelector("input[type=submit]")
+    );
+  }
+
+  function resultSignature(node) {
+    if (!node) return "";
+    const text = normalize(node.textContent);
+    const html = normalize(node.innerHTML).slice(0, 600);
+    return `${text}||${html}`;
+  }
+
+  function resultHeadline(node) {
+    if (!node) return "";
+    const heading = node.querySelector("h1, h2, h3, strong, b");
+    return normalize(heading ? heading.textContent : "");
+  }
+
+  function sampleText(field) {
+    const key = `${field.id || ""} ${field.name || ""} ${field.placeholder || ""}`.toLowerCase();
+    if (/email/.test(key)) return "bonjour@example.com";
+    if (/url|site|website|lien/.test(key)) return "https://example.com/offre-solaire";
+    if (/phone|tel|mobile/.test(key)) return "0612345678";
+    if (/ville|city|localisation|location|region|departement|postal/.test(key)) return "Paris";
+    if (/orientation/.test(key)) return "sud";
+    if (/keyword|theme|topic|sujet|subject/.test(key)) return "energie solaire domestique";
+    if (/titre|title/.test(key)) return "Simulateur solaire maison";
+    if (/nom|name|project/.test(key)) return "Projet Horizon";
+    if (/description|notes|content|message/.test(key)) return "Maison individuelle exposee sud avec toiture exploitable.";
+    return field.placeholder || "France";
+  }
+
+  function sampleNumber(field) {
+    const key = `${field.id || ""} ${field.name || ""}`.toLowerCase();
+    if (/inclinaison|angle|slope/.test(key)) return "30";
+    if (/surface|size|m2|sqm/.test(key)) return "28";
+    if (/annee|year/.test(key)) return "2024";
+    if (/prix|price|budget|cost|amount|montant/.test(key)) return "12000";
+    const min = Number(field.min || "");
+    const max = Number(field.max || "");
+    if (Number.isFinite(min) && Number.isFinite(max) && max >= min) {
+      return String(Math.min(max, Math.max(min, min + Math.round((max - min) * 0.35))));
+    }
+    if (Number.isFinite(min)) return String(Math.max(min, 12));
+    if (Number.isFinite(max)) return String(Math.min(max, 12));
+    return field.value || "12";
+  }
+
+  function applySample(field) {
+    const tag = (field.tagName || "").toLowerCase();
+    const type = (field.type || "").toLowerCase();
+    if (field.disabled) return;
+    if (type === "hidden" || type === "submit" || type === "button" || type === "reset" || type === "image" || type === "file") {
+      return;
+    }
+    const currentValue = normalize(field.value);
+    if (tag === "select") {
+      if (currentValue) return;
+      const option = Array.from(field.options || []).find((item) => item.value && !item.disabled) || field.options[0];
+      if (option) field.value = option.value;
+      return;
+    }
+    if (type === "checkbox") {
+      if (field.checked) return;
+      field.checked = true;
+      return;
+    }
+    if (type === "radio") {
+      if (field.checked) return;
+      field.checked = true;
+      return;
+    }
+    if (type === "date") {
+      if (currentValue) return;
+      field.value = "2026-03-01";
+      return;
+    }
+    if (type === "email") {
+      if (currentValue) return;
+      field.value = "bonjour@example.com";
+      return;
+    }
+    if (type === "url") {
+      if (currentValue) return;
+      field.value = "https://example.com/offre-solaire";
+      return;
+    }
+    if (type === "tel") {
+      if (currentValue) return;
+      field.value = "0612345678";
+      return;
+    }
+    if (type === "color") {
+      if (currentValue) return;
+      field.value = "#2f855a";
+      return;
+    }
+    if (type === "number" || type === "range") {
+      if (currentValue) return;
+      field.value = sampleNumber(field);
+      return;
+    }
+    if (currentValue) return;
+    field.value = sampleText(field);
+  }
+
+  function stamp(status, detail, headline, primary) {
+    if (qaFinished) return;
+    qaFinished = true;
+    if (qaWatchdog) {
+      window.clearTimeout(qaWatchdog);
+      qaWatchdog = null;
+    }
+    const node = marker();
+    node.dataset.status = status;
+    node.dataset.mode = "native-form";
+    node.dataset.detail = detail || "";
+    node.dataset.headline = headline || "";
+    node.dataset.primary = primary || "";
+    node.dataset.viewport = window.innerWidth <= 640 ? "mobile" : "desktop";
+    window.setTimeout(function () {
+      try {
+        window.stop();
+      } catch (_error) {}
+    }, 0);
+  }
+
+  function installModalGuards() {
+    const noop = function () {};
+    const approve = function () { return true; };
+    const empty = function () { return ""; };
+    try { window.alert = noop; } catch (_error) {}
+    try { window.confirm = approve; } catch (_error) {}
+    try { window.prompt = empty; } catch (_error) {}
+  }
+
+  function triggerAction(form, action) {
+    try {
+      if (typeof form.requestSubmit === "function") {
+        form.requestSubmit(action || undefined);
+        return;
+      }
+    } catch (_error) {}
+    if (action && typeof action.click === "function") {
+      action.click();
+      return;
+    }
+    form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+  }
+
+  function inspectResult(before, attemptsLeft) {
+    const result = findResult();
+    if (!result) {
+      stamp("fail", "Result area was not found.", "");
+      return;
+    }
+    const after = resultSignature(result);
+    const text = normalize(result.textContent);
+    if (after && after !== before && text.length >= 24) {
+      const primary = result.querySelector("a[href], button[data-href], [data-primary-url]") || document.querySelector("#tool-result a[href]");
+      stamp("pass", "Native form submission updated the result area.", resultHeadline(result), primary ? (primary.getAttribute("href") || primary.getAttribute("data-primary-url") || "") : "");
+      return;
+    }
+    if (attemptsLeft > 0) {
+      window.setTimeout(function () {
+        inspectResult(before, attemptsLeft - 1);
+      }, 250);
+      return;
+    }
+    stamp("fail", "Result area did not render usable output.", resultHeadline(result));
+  }
+
+  function runSmoke() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("__qa") !== "functional") return;
+    qaWatchdog = window.setTimeout(function () {
+      stamp("fail", "QA smoke timed out before the page reported a usable result.", "");
+    }, 7000);
+    const form = findForm();
+    if (!form) {
+      stamp("fail", "Primary tool form was not found.", "");
+      return;
+    }
+    const result = findResult();
+    const before = resultSignature(result);
+    installModalGuards();
+    try {
+      form.querySelectorAll("input, select, textarea").forEach(applySample);
+    } catch (error) {
+      stamp("fail", error && error.message ? `QA smoke sample failed: ${error.message}` : "QA smoke sample failed before submit.", "");
+      return;
+    }
+    const action = primaryAction(form);
+    try {
+      triggerAction(form, action);
+    } catch (error) {
+      stamp("fail", error && error.message ? `QA smoke submit failed: ${error.message}` : "QA smoke submit failed.", "");
+      return;
+    }
+    inspectResult(before, 10);
+  }
+
+  window.addEventListener("error", function (event) {
+    const message = event && event.message ? event.message : "JavaScript runtime error during QA smoke.";
+    stamp("fail", `QA smoke JS error: ${message}`, "");
+  }, { once: true });
+
+  window.addEventListener("unhandledrejection", function (event) {
+    const reason = event && event.reason;
+    const detail = typeof reason === "string"
+      ? reason
+      : reason && reason.message
+        ? reason.message
+        : "Unhandled promise rejection during QA smoke.";
+    stamp("fail", `QA smoke rejection: ${detail}`, "");
+  }, { once: true });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      window.setTimeout(runSmoke, 60);
+    }, { once: true });
+  } else {
+    window.setTimeout(runSmoke, 60);
+  }
+})();
+</script>
+</body>
+</html>
