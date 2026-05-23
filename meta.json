@@ -1,0 +1,46 @@
+{
+  "name": "Escáner de riesgo de permisos APK",
+  "description": "Evalúa el riesgo de permisos sensibles en una APK antes de instalarla. Herramienta web para Android.",
+  "theme": "tool",
+  "design_theme": "analog-meets-ai",
+  "structure_preset": "quick-compare-strip",
+  "render_direction": "atlas-report",
+  "page_blueprint": "signal-matrix",
+  "language": "es",
+  "country": "AR",
+  "url": null,
+  "expected_url": "https://apk-permission-risk-scanner.onrender.com",
+  "created": "2026-05-23T00:30:03.082722+00:00",
+  "owner_user_id": "user-1774822953462",
+  "owner_username": "admin",
+  "owner_display_name": "Administrator",
+  "provider_space_id": "provider-space",
+  "provider_space_name": "Provider space",
+  "status": "generated",
+  "run_id": "run-1779495708244",
+  "external_site_request_id": null,
+  "external_client_ref": null,
+  "external_source_label": null,
+  "source_type": "generated",
+  "publish_target": "render",
+  "mode": "production",
+  "github": {
+    "status": "pending"
+  },
+  "deployment": {
+    "status": "pending"
+  },
+  "qa": {
+    "status": "pending"
+  },
+  "features": [
+    "Hero pattern: tool-first",
+    "Proof module: metrics",
+    "Design theme: Analog Meets AI",
+    "Render direction: Atlas Report",
+    "Page blueprint: Signal Matrix",
+    "Runtime mode: analysis_tool",
+    "Generation mode: direct_html",
+    "Artifact rendered, awaiting QA and deployment"
+  ]
+}
